@@ -1,0 +1,2 @@
+﻿Editor:
+https://github.com/FastReports/FastReport/releases/download/v2025.2.0/FastReport.Community.2025.2.0.zip

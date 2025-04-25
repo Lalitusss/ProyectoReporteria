@@ -1,0 +1,158 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+ @using Reporteria.Services
+
+<h1 class="text-center mt-4 mb-4 fs-4">Reportes</h1>
+
+<!-- Primera fila -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="accordion" id="accordionColumn1">
+            <!-- Acordeón 1 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button @(IsSectionActive(1) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(1)" aria-expanded="@(IsSectionActive(1))" aria-controls="collapseOne">
+                        (Credencial)
+                    </button>
+                </h2>
+                @if (IsSectionActive(1))
+                {
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionColumn1">
+                        <div class="accordion-body border p-3">
+                            <input type="text" class="form-control mb-2" placeholder="Nombre y Apellido" @bind="nya" />
+                            <input type="text" class="form-control mb-2" placeholder="DNI" @bind="dni" />
+                            <input type="text" class="form-control mb-2" placeholder="Credencial" @bind="numcredencial" />
+                            <div class="d-flex justify-content-center">
+                                <button @onclick="DownloadPdf" class="btn btn-primary mb-4">
+                                    <i class="fas fa-file-pdf"></i> Descargar PDF Fast Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="accordion" id="accordionColumn2">
+            <!-- Acordeón 2 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button @(IsSectionActive(2) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(2)" aria-expanded="@(IsSectionActive(2))" aria-controls="collapseTwo">
+                        (Reporte 2)
+                    </button>
+                </h2>
+                @if (IsSectionActive(2))
+                {
+                    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionColumn2">
+                        <div class="accordion-body border p-3">
+                            <input type="text" class="form-control mb-2" placeholder="Campo 1" />
+                            <input type="text" class="form-control mb-2" placeholder="Campo 2" />
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download"></i> Descargar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Segunda fila -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="accordion" id="accordionColumn3">
+            <!-- Acordeón 3 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button @(IsSectionActive(3) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(3)" aria-expanded="@(IsSectionActive(3))" aria-controls="collapseThree">
+                        (Reporte 3)
+                    </button>
+                </h2>
+                @if (IsSectionActive(3))
+                {
+                    <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionColumn3">
+                        <div class="accordion-body border p-3">
+                            <input type="text" class="form-control mb-2" placeholder="Campo 1" />
+                            <input type="text" class="form-control mb-2" placeholder="Campo 2" />
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download"></i> Descargar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="accordion" id="accordionColumn4">
+            <!-- Acordeón 4 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button @(IsSectionActive(4) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(4)" aria-expanded="@(IsSectionActive(4))" aria-controls="collapseFour">
+                        (Reporte 4)
+                    </button>
+                </h2>
+                @if (IsSectionActive(4))
+                {
+                    <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour" data-bs-parent="#accordionColumn4">
+                        <div class="accordion-body border p-3">
+                            <input type="text" class="form-control mb-2" placeholder="Campo 1" />
+                            <input type="text" class="form-control mb-2" placeholder="Campo 2" />
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download"></i> Descargar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Solo una sección activa a la vez
+    private int? activeSection = null;
+
+    private string nya;
+    private string dni;
+    private string numcredencial;
+
+
+    private void ToggleSection(int sectionNumber)
+    {
+        if (activeSection == sectionNumber)
+        {
+            activeSection = null; // Cierra la sección si ya estaba abierta
+        }
+        else
+        {
+            activeSection = sectionNumber; // Abre la sección clickeada y cierra las demás
+        }
+    }
+
+    private bool IsSectionActive(int sectionNumber) => activeSection == sectionNumber;
+}
+
+
+@* FAST REPORT *@
+@inject IJSRuntime JS
+
+
+
+@code {
+    private async Task DownloadPdf()
+    {
+        string url = $"/download-credencial?nya={Uri.EscapeDataString(nya)}&dni={Uri.EscapeDataString(dni)}&numcredencial={Uri.EscapeDataString(numcredencial)}";
+        await JS.InvokeVoidAsync("open", url, "_blank");
+    }
+}
