@@ -41,7 +41,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTwo">
                     <button class="accordion-button @(IsSectionActive(2) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(2)" aria-expanded="@(IsSectionActive(2))" aria-controls="collapseTwo">
-                        (Reporte 2)
+                        (Crendencial Sindicato)
                     </button>
                 </h2>
                 @if (IsSectionActive(2))
@@ -71,7 +71,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingThree">
                     <button class="accordion-button @(IsSectionActive(3) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(3)" aria-expanded="@(IsSectionActive(3))" aria-controls="collapseThree">
-                        (Reporte 3)
+                        (Credencial Inspector)
                     </button>
                 </h2>
                 @if (IsSectionActive(3))
@@ -98,7 +98,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingFour">
                     <button class="accordion-button @(IsSectionActive(4) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(4)" aria-expanded="@(IsSectionActive(4))" aria-controls="collapseFour">
-                        (Reporte 4)
+                        (Recibo)
                     </button>
                 </h2>
                 @if (IsSectionActive(4))
@@ -149,12 +149,11 @@
 @* FAST REPORT *@
 @inject IJSRuntime JS
 
-
-
 @code {
     private async Task DownloadPdf()
     {
         string url = $"/download-credencial?afiliado={Uri.EscapeDataString(afiliado)}&cuil={Uri.EscapeDataString(cuil)}&du={Uri.EscapeDataString(du)}&titular={Uri.EscapeDataString(titular)}";
-        await JS.InvokeVoidAsync("open", url, "_blank");
+        await JS.InvokeVoidAsync("downloadFileFromUrl", url);
     }
 }
+

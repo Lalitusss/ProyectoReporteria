@@ -9,80 +9,50 @@ namespace Reporteria.Services
     public class ReporteService<T> : IReporte<T>
     {
         private readonly IParametrosReporte<T> _parametrosMapper;
+        private readonly Dictionary<string, byte[]> _templateCache = new(); // Cache simple en memoria
 
         public ReporteService(IParametrosReporte<T> parametrosMapper)
         {
             _parametrosMapper = parametrosMapper;
         }
 
-
-
         public Task<byte[]> Ejecutar(ReportRequest<T> request)
         {
             FastReport.Utils.Config.WebMode = true;
 
-            using Report reporte = new Report();
-
-            string nombreReporte = request.NombreReporte;
-
-            if (string.IsNullOrWhiteSpace(nombreReporte))
+            if (string.IsNullOrWhiteSpace(request.NombreReporte))
                 throw new ArgumentException("El nombre del reporte no puede estar vacío.", nameof(request.NombreReporte));
 
-            string rutaReporte = Helper.ObtenerRutaReporte(nombreReporte);
+            string rutaReporte = Helper.ObtenerRutaReporte(request.NombreReporte);
 
-            var sw = Stopwatch.StartNew();
-
-            // Carga del reporte
-            reporte.Load(rutaReporte);
-            sw.Stop();
-            Debug.WriteLine($"[FastReport] Carga del reporte: {sw.ElapsedMilliseconds} ms");
-
-            // Obtener parámetros
-            sw.Restart();
-            var parametros = _parametrosMapper.ObtenerParametrosReporte(request.Entity);
-            sw.Stop();
-            Debug.WriteLine($"[FastReport] Obtención de parámetros: {sw.ElapsedMilliseconds} ms");
-
-            // Asignar parámetros
-            sw.Restart();
-            foreach (var parametro in parametros)
+            if (!_templateCache.TryGetValue(rutaReporte, out var templateBytes))
             {
-                reporte.SetParameterValue(parametro.Key, parametro.Value);
+                templateBytes = File.ReadAllBytes(rutaReporte);
+                _templateCache[rutaReporte] = templateBytes;
             }
-            sw.Stop();
-            Debug.WriteLine($"[FastReport] Asignación de parámetros: {sw.ElapsedMilliseconds} ms");
 
-            // Preparar reporte
-            sw.Restart();
-            bool preparado = reporte.Prepare();
-            sw.Stop();
-            Debug.WriteLine($"[FastReport] Preparación del reporte: {sw.ElapsedMilliseconds} ms");
+            using var ms = new MemoryStream(templateBytes);
+            using var reporte = new Report();
+            reporte.Load(ms);
 
-            if (preparado)
+            var parametros = _parametrosMapper.ObtenerParametrosReporte(request.Entity);
+            foreach (var parametro in parametros)
+                reporte.SetParameterValue(parametro.Key, parametro.Value);
+
+            if (reporte.Prepare())
             {
-                // Exportar a PDF
-                sw.Restart();
-                using var ms = new MemoryStream();
+                using var pdfStream = new MemoryStream();
                 var pdfExport = new PDFSimpleExport
                 {
                     ShowProgress = false,
                     Subject = "Reporte generado",
-                    Title = nombreReporte
+                    Title = request.NombreReporte
                 };
-
-                reporte.Export(pdfExport, ms);
-                ms.Position = 0;
-                sw.Stop();
-                Debug.WriteLine($"[FastReport] Exportación a PDF: {sw.ElapsedMilliseconds} ms");
-
-                return Task.FromResult(ms.ToArray());
+                reporte.Export(pdfExport, pdfStream);
+                return Task.FromResult(pdfStream.ToArray());
             }
-            else
-            {
-                return Task.FromResult(Array.Empty<byte>());
-            }
+
+            return Task.FromResult(Array.Empty<byte>());
         }
-
-
     }
 }

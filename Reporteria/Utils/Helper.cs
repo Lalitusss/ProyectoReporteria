@@ -5,6 +5,7 @@ namespace Reporteria.Utils
     public static class Helper
     {
         private const string ExtensionReporte = ".frx";
+        private const string CarpetaReporte = "Reportes";
 
         public static string ObtenerRutaReporte(string nombreReporte)
         {
@@ -19,7 +20,7 @@ namespace Reporteria.Utils
             string directorioEnsamblado = Path.GetDirectoryName(rutaEnsamblado)
                 ?? throw new DirectoryNotFoundException("No se pudo obtener el directorio del ensamblado.");
 
-            return Path.Combine(directorioEnsamblado, "Reportes", nombreConExtension);
+            return Path.Combine(directorioEnsamblado, CarpetaReporte, nombreConExtension);
         }
     }
 }
