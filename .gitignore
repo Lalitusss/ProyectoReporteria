@@ -52,3 +52,6 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+/.vs/ProyectoReporteria/FileContentIndex
+/.vs/ProyectoReporteria/DesignTimeBuild
+/.vs/ProyectoReporteria/v17

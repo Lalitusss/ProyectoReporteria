@@ -2,6 +2,7 @@
 using FastReport.Export.PdfSimple;
 using Reporteria.Interfaces;
 using Reporteria.Utils;
+using System.Diagnostics;
 
 namespace Reporteria.Services
 {
@@ -13,6 +14,8 @@ namespace Reporteria.Services
         {
             _parametrosMapper = parametrosMapper;
         }
+
+
 
         public Task<byte[]> Ejecutar(ReportRequest<T> request)
         {
@@ -27,18 +30,38 @@ namespace Reporteria.Services
 
             string rutaReporte = Helper.ObtenerRutaReporte(nombreReporte);
 
+            var sw = Stopwatch.StartNew();
+
+            // Carga del reporte
             reporte.Load(rutaReporte);
+            sw.Stop();
+            Debug.WriteLine($"[FastReport] Carga del reporte: {sw.ElapsedMilliseconds} ms");
 
-            // Obtener parámetros desde el mapper
+            // Obtener parámetros
+            sw.Restart();
             var parametros = _parametrosMapper.ObtenerParametrosReporte(request.Entity);
+            sw.Stop();
+            Debug.WriteLine($"[FastReport] Obtención de parámetros: {sw.ElapsedMilliseconds} ms");
 
+            // Asignar parámetros
+            sw.Restart();
             foreach (var parametro in parametros)
             {
                 reporte.SetParameterValue(parametro.Key, parametro.Value);
             }
+            sw.Stop();
+            Debug.WriteLine($"[FastReport] Asignación de parámetros: {sw.ElapsedMilliseconds} ms");
 
-            if (reporte.Prepare())
+            // Preparar reporte
+            sw.Restart();
+            bool preparado = reporte.Prepare();
+            sw.Stop();
+            Debug.WriteLine($"[FastReport] Preparación del reporte: {sw.ElapsedMilliseconds} ms");
+
+            if (preparado)
             {
+                // Exportar a PDF
+                sw.Restart();
                 using var ms = new MemoryStream();
                 var pdfExport = new PDFSimpleExport
                 {
@@ -49,6 +72,8 @@ namespace Reporteria.Services
 
                 reporte.Export(pdfExport, ms);
                 ms.Position = 0;
+                sw.Stop();
+                Debug.WriteLine($"[FastReport] Exportación a PDF: {sw.ElapsedMilliseconds} ms");
 
                 return Task.FromResult(ms.ToArray());
             }
@@ -57,5 +82,7 @@ namespace Reporteria.Services
                 return Task.FromResult(Array.Empty<byte>());
             }
         }
+
+
     }
 }

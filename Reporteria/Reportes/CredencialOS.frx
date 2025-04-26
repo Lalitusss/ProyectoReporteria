@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="04/23/2025 10:15:35" ReportInfo.Modified="04/25/2025 18:27:17" ReportInfo.CreatorVersion="2025.2.0.0">
+  <ScriptText>using System;
+using System.Drawing;
+using FastReport;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <Parameter Name="afiliado" DataType="System.String" AsString=""/>
+    <Parameter Name="cuil" DataType="System.String" AsString=""/>
+    <Parameter Name="du" DataType="System.String" AsString=""/>
+    <Parameter Name="titular" DataType="System.String" AsString=""/>
+  </Dictionary>
+  <ReportPage Name="Credencial" PaperWidth="85" PaperHeight="40" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" Watermark.Font="Arial, 60pt">
+    <DataBand Name="BandaDatos" Width="321.3" Height="147.42">
+      <TextObject Name="titulo" Left="56.7" Top="9.45" Width="245.7" Height="22.68" CanGrow="true" Text="OBRA SOCIAL DE CHOFERES DE CAMIONES DE LA PROVINCIA DE BUENOS AIRES" HorzAlign="Center" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="AFI" Left="56.7" Top="37.8" Width="66.15" Height="11.34" Text="AFILIADO:" HorzAlign="Right" Font="Arial, 7pt"/>
+      <TextObject Name="CUIL" Left="56.7" Top="56.7" Width="66.15" Height="11.34" Text="CUIL:" HorzAlign="Right" Font="Arial, 7pt"/>
+      <TextObject Name="TITULAR" Left="56.7" Top="75.6" Width="66.15" Height="11.34" Text="TITULAR:" HorzAlign="Right" Font="Arial, 7pt"/>
+      <TextObject Name="txtAfiliado" Left="132.3" Top="37.8" Width="85.05" Height="11.34" Text="[afiliado]" WordWrap="false" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="txtCuil" Left="132.3" Top="56.7" Width="85.05" Height="11.34" Text="[cuil]" WordWrap="false" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="txtTitular" Left="132.3" Top="75.6" Width="170.1" Height="11.34" Text="[titular]" WordWrap="false" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="DU" Left="217.35" Top="56.7" Width="22.68" Height="11.34" Text="DU:" HorzAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="txtDu" Left="245.7" Top="56.7" Width="56.7" Height="11.34" Text="[du]" WordWrap="false" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="txtFirma" Left="226.8" Top="122.85" Width="75.6" Height="15.12" Text="Hugo A. Moyano&#13;&#10;PTE OBRA SOCIAL" HorzAlign="Center" Font="Arial, 5pt"/>
+      <PictureObject Name="Logo" Left="18.9" Top="9.45" Width="28.3" Height="36.4" BeforePrintEvent="Logo_BeforePrint" SizeMode="StretchImage" ImageFormat="Png" Image="iVBORw0KGgoAAAANSUhEUgAAAFUAAABwBAMAAACduiHsAAAABGdBTUEAALGPC/xhBQAAABJQTFRF/v//x+faktK3XbSOBaJjCJBRz53B7gAAA/JJREFUWMO1mMuWoyAQhtGMey9xH0H2Crqf7lD7VuD9X2XKOzEmwTmny3NijF/Kn6IoQHJoBfG2i/FnW6i8uLC55UbZ2Ifl1oBS0HuggVGIIvz1mcXnTwb9JxmBVYvZe+HpdoDNWzp00EGHtbeXClq1M3gJt0Y9wd2xV/6MKnXU3UHaHqEKnNDlw3+NMtYeosrtwFy9t+4E2/8Su2/bW/bLn1VW+LPKdv6sspU/C8vo82DXwHmxs+N89zjXtp+7Zxa+U0FnY5TtHbss3BtDN+udO9We1Vzq1rS9VSgArMOqnx1rWRciy3usJyS5KpfVj6yRd4Ks4j16DU1ke+vADyx86xjZRme1lDKoQ1mzbaiM6bayusXLi27FUPuUBRTSbzUAbg5r5NDUi1atNU3TqOEAtsK9owHYmKeh7tu8KyhNiiJJaCZnFfB3Y03XjFcXI8Sdrx3X69aRO7Gg2WVmr2x7sLI5nxVufWzYbWFT4bYoL53wjiyIiixszq8OG3HYsYoiVU1sJoTrV7Z7vTVZ/Waod8vKb3kfI+HkjnBYIZmUgmLf4ae4y3186YPfu1yt6ed+hmJmjeM3Z9eZHU80W/r1dqhhGj/deNJLDoDZs6G50nJqzc+YkYavMYl3ekPsCzmlLRvv6D0LD3pzY42xupVDuXf83jYNU1/orNdjywSbwtYesZMGazgrWFEWOOTxnBVPbLFq0LzXtKQ5HiXlKaftvm0sLVg/lARJCJOU41EOn2le7FlACsdCSikG/MIFp/Ph+rVzTsqQCBJM1f6SY3kqaUZZylJHbz+znAdAIkMwzmEgGiHFEIIxHiv7M/cbl2EZ5znJCYnq7mr1WM8kQM3LTe6sgYXXmEZxhNd1FdgpJXQDcbSwes3fJG2JGFmBfs3UHdLC1+J3rMAja++9JSwiHENWDzX6jjamDpRz/lZrfQATk8iSmLRNTYIkSdMwC1O0eMkHt+5YK4dxYpDNsF1CiCIIggs1mwSnpva3S5UZWeNPmGhoeDeCiZ2WPRs7zitK/iXzY2Fg53vd0ZwFvCJLDcPmwBbcA1bGwVKhdZLNX1/MhaYBs4nannA4b1r1ZHBiPp4qn988/+PPrgtyD3ZdSn1mt5XUR9ZZ5n9kTezNuovltyxY4+5g3rC4hpAPG4f8Nan324BDFsAq8bwXWWu8mzPWiKNdy8ImzZqB1orj/c0yNrE6MRzOONLu4tVOaGHH+zjakzdbpoX12QkuevsTrD7Bwm+x8e+w9owGfxZOxMxH7sL6uP0f9ud32Gl968neTrCVP3uqbWdiZk+wyoed33p4aSB/jHfbyDhVe74owvWmswX+YAEuM4ivFV4vnwj5B7etqnwVBKxAAAAAAElFTkSuQmCC"/>
+    </DataBand>
+  </ReportPage>
+</Report>

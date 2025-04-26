@@ -12,19 +12,20 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button @(IsSectionActive(1) ? "" : "collapsed")" type="button" @onclick="() => ToggleSection(1)" aria-expanded="@(IsSectionActive(1))" aria-controls="collapseOne">
-                        (Credencial)
+                        (Credencial OS)
                     </button>
                 </h2>
                 @if (IsSectionActive(1))
                 {
                     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionColumn1">
                         <div class="accordion-body border p-3">
-                            <input type="text" class="form-control mb-2" placeholder="Nombre y Apellido" @bind="nya" />
-                            <input type="text" class="form-control mb-2" placeholder="DNI" @bind="dni" />
-                            <input type="text" class="form-control mb-2" placeholder="Credencial" @bind="numcredencial" />
+                            <input type="text" class="form-control mb-2" placeholder="Afiliado" @bind="afiliado" />
+                            <input type="text" class="form-control mb-2" placeholder="CUIL" @bind="cuil" />
+                            <input type="text" class="form-control mb-2" placeholder="DU" @bind="du" />
+                            <input type="text" class="form-control mb-2" placeholder="Titular" @bind="titular" />
                             <div class="d-flex justify-content-center">
                                 <button @onclick="DownloadPdf" class="btn btn-primary mb-4">
-                                    <i class="fas fa-file-pdf"></i> Descargar PDF Fast Report
+                                    <i class="fas fa-file-pdf"></i> Descargar
                                 </button>
                             </div>
                         </div>
@@ -123,9 +124,10 @@
     // Solo una sección activa a la vez
     private int? activeSection = null;
 
-    private string nya;
-    private string dni;
-    private string numcredencial;
+    private string afiliado;
+    private string cuil;
+    private string du;
+    private string titular;
 
 
     private void ToggleSection(int sectionNumber)
@@ -152,7 +154,7 @@
 @code {
     private async Task DownloadPdf()
     {
-        string url = $"/download-credencial?nya={Uri.EscapeDataString(nya)}&dni={Uri.EscapeDataString(dni)}&numcredencial={Uri.EscapeDataString(numcredencial)}";
+        string url = $"/download-credencial?afiliado={Uri.EscapeDataString(afiliado)}&cuil={Uri.EscapeDataString(cuil)}&du={Uri.EscapeDataString(du)}&titular={Uri.EscapeDataString(titular)}";
         await JS.InvokeVoidAsync("open", url, "_blank");
     }
 }

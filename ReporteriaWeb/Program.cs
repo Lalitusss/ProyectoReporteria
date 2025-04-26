@@ -22,18 +22,20 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.MapGet("/download-credencial", async (
-    string nya, string dni, string numcredencial,
-    IReporte<CredencialDto> reporteService) =>
+    string afiliado, string cuil, 
+    string du,string titular,
+    IReporte<CredencialOS> reporteService) =>
 {
-    var request = new ReportRequest<CredencialDto>
+    var request = new ReportRequest<CredencialOS>
     {
-        Entity = new CredencialDto
+        Entity = new CredencialOS
         {
-            NyA = nya,
-            DNI = dni,
-            NumCredencial = numcredencial
+            Afiliado = afiliado,
+            Cuil = cuil,
+            DU = du,
+            Titular = titular
         },
-        NombreReporte = "Credencial.frx"
+        NombreReporte = "CredencialOS"
     };
 
     byte[] pdfBytes = await reporteService.Ejecutar(request);
@@ -41,7 +43,7 @@ app.MapGet("/download-credencial", async (
     if (pdfBytes == null || pdfBytes.Length == 0)
         return Results.NotFound();
 
-    return Results.File(pdfBytes, "application/pdf", "Credencial.pdf");
+    return Results.File(pdfBytes, "application/pdf", "CredencialOS.pdf");
 });
 
 app.UseHttpsRedirection();

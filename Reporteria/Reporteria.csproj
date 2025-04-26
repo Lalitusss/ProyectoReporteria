@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Imagenes\Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Imagenes\Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FastReport.OpenSource" Version="2025.2.0" />
     <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2025.2.0" />
   </ItemGroup>
@@ -15,10 +23,6 @@
     <None Update="Reportes\**\*.*">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Reportes\" />
   </ItemGroup>
 
 </Project>
