@@ -1,6 +1,8 @@
 ﻿@page "/"
 @inject IJSRuntime JSRuntime
- @using Reporteria.Services
+@inject IJSRuntime JS
+@using Reporteria.Services
+
 
 <h1 class="text-center mt-4 mb-4 fs-4">Reportes</h1>
 
@@ -105,10 +107,21 @@
                 {
                     <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour" data-bs-parent="#accordionColumn4">
                         <div class="accordion-body border p-3">
-                            <input type="text" class="form-control mb-2" placeholder="Campo 1" />
-                            <input type="text" class="form-control mb-2" placeholder="Campo 2" />
+                            <input type="text" class="form-control mb-2" placeholder="Número" @bind="numero" />
+                            <input type="text" class="form-control mb-2" placeholder="Fecha" @bind="fecha" />
+                            <input type="text" class="form-control mb-2" placeholder="Recibido" @bind="recibido" />
+                            <input type="text" class="form-control mb-2" placeholder="Domicilio" @bind="domicilio" />
+                            <input type="text" class="form-control mb-2" placeholder="CP" @bind="cp" />
+                            <input type="text" class="form-control mb-2" placeholder="Localidad" @bind="localidad" />
+                            <input type="text" class="form-control mb-2" placeholder="Cantidad" @bind="cantidad" />
+                            <input type="text" class="form-control mb-2" placeholder="CUIT" @bind="cuit" />
+                            <input type="text" class="form-control mb-2" placeholder="Teléfono" @bind="telefono" />
+                            <input type="text" class="form-control mb-2" placeholder="EMP" @bind="emp" />
+                            <input type="text" class="form-control mb-2" placeholder="Tipo de Pago" @bind="tipodepago" />
+                            <input type="text" class="form-control mb-2" placeholder="Período" @bind="periodo" />
+                            <input type="text" class="form-control mb-2" placeholder="Ubicación" @bind="ubicacion" />
                             <div class="d-flex justify-content-center">
-                                <button class="btn btn-primary">
+                                <button @onclick="DownloadPdfRecibo" class="btn btn-primary">
                                     <i class="fas fa-download"></i> Descargar
                                 </button>
                             </div>
@@ -123,12 +136,25 @@
 @code {
     // Solo una sección activa a la vez
     private int? activeSection = null;
-
+    // CredencialOS
     private string afiliado;
     private string cuil;
     private string du;
     private string titular;
-
+    // Recibo
+    private string numero;
+    private string fecha;
+    private string recibido;
+    private string domicilio;
+    private string cp;
+    private string localidad;
+    private string cantidad;
+    private string cuit;
+    private string telefono;
+    private string emp;
+    private string tipodepago;
+    private string periodo;
+    private string ubicacion;
 
     private void ToggleSection(int sectionNumber)
     {
@@ -143,17 +169,29 @@
     }
 
     private bool IsSectionActive(int sectionNumber) => activeSection == sectionNumber;
-}
-
-
-@* FAST REPORT *@
-@inject IJSRuntime JS
-
-@code {
     private async Task DownloadPdf()
     {
         string url = $"/download-credencial?afiliado={Uri.EscapeDataString(afiliado)}&cuil={Uri.EscapeDataString(cuil)}&du={Uri.EscapeDataString(du)}&titular={Uri.EscapeDataString(titular)}";
         await JS.InvokeVoidAsync("downloadFileFromUrl", url);
     }
-}
+    private async Task DownloadPdfRecibo()
+    {
+        string url = $"/download-recibo?" +
+                     $"numero={Uri.EscapeDataString(numero ?? string.Empty)}&" +
+                     $"fecha={Uri.EscapeDataString(fecha ?? string.Empty)}&" +
+                     $"recibido={Uri.EscapeDataString(recibido ?? string.Empty)}&" +
+                     $"domicilio={Uri.EscapeDataString(domicilio ?? string.Empty)}&" +
+                     $"cp={Uri.EscapeDataString(cp ?? string.Empty)}&" +
+                     $"localidad={Uri.EscapeDataString(localidad ?? string.Empty)}&" +
+                     $"cantidad={Uri.EscapeDataString(cantidad ?? string.Empty)}&" +
+                     $"cuit={Uri.EscapeDataString(cuit ?? string.Empty)}&" +
+                     $"telefono={Uri.EscapeDataString(telefono ?? string.Empty)}&" +
+                     $"emp={Uri.EscapeDataString(emp ?? string.Empty)}&" +
+                     $"tipodepago={Uri.EscapeDataString(tipodepago ?? string.Empty)}&" +
+                     $"periodo={Uri.EscapeDataString(periodo ?? string.Empty)}&" +
+                     $"ubicacion={Uri.EscapeDataString(ubicacion ?? string.Empty)}";
 
+        await JS.InvokeVoidAsync("downloadFileFromUrl", url);
+    }
+}
+ 

@@ -1,6 +1,4 @@
-﻿using Reporteria.Services;
-
-namespace Reporteria.Interfaces
+﻿namespace Reporteria.Interfaces
 {
     public interface IReporte<T>
     {
