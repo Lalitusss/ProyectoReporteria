@@ -1,2 +1,17 @@
 ﻿Editor:
 https://github.com/FastReports/FastReport/releases/download/v2025.2.0/FastReport.Community.2025.2.0.zip
+
+Pasos para implementar la DLL:
+	En la libreria:
+		Creacion del *.FRX, y agregarlo en la carpeta REPORTES.
+		Crear el DTO correspondiente.
+
+	En el proyecto:
+		Agregar en el proyecto (Add en el nombre del proyecto, Project Reference..., Tildar la DLL).
+		Agregar en el Program.cs la minimal API (tomarla la que esta).
+		Agrega el reporte en la linea con el Dictionary el reporte a querer imprimir.
+
+		Desde Blazor:
+			Usar Index.razor como modelo.
+			Crear la variable DTO y en los inputs bindearlos.
+			Agregar private Task con el Download especifico y relacionarlo con el generico.

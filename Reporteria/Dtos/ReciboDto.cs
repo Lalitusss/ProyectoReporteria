@@ -1,5 +1,8 @@
-﻿public class ReciboDto
+﻿using System.ComponentModel.DataAnnotations;
+
+public class ReciboDto
 {
+    [Required]
     public string? Numero { get; set; }
     public string? Fecha { get; set; }
     public string? Recibido { get; set; }

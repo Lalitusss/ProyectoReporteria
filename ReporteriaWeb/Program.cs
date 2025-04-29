@@ -1,3 +1,4 @@
+﻿using Microsoft.AspNetCore.Mvc;
 using Reporteria.Interfaces;
 using Reporteria.Services;
 
@@ -21,73 +22,46 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.MapGet("/download-credencial", async (
-    string afiliado, string cuil,
-    string du, string titular,
-    IReporte<CredencialOS> reporteService) =>
+// Configuración de reportes
+var reportesConfig = new Dictionary<string, Type>
 {
-    var request = new ReportRequest<CredencialOS>
-    {
-        Entity = new CredencialOS
-        {
-            Afiliado = afiliado,
-            Cuil = cuil,
-            DU = du,
-            Titular = titular
-        },
-        NombreReporte = "CredencialOS"
-    };
+    { "CredencialOS", typeof(CredencialOSDto) },
+    { "Recibo", typeof(ReciboDto) },
+    // Agrega nuevos reportes aquí
+};
 
-    byte[] pdfBytes = await reporteService.Ejecutar(request);
-
-    if (pdfBytes == null || pdfBytes.Length == 0)
-        return Results.NotFound();
-
-    return Results.File(pdfBytes, "application/pdf", "CredencialOS.pdf");
-});
-app.MapGet("/download-recibo", async (
-      string numero,
-      string fecha,
-      string recibido,
-      string domicilio,
-      string cp,
-      string localidad,
-      string cantidad,
-      string cuit,
-      string telefono,
-      string emp,
-      string tipodepago,
-      string periodo,
-      string ubicacion,
-    IReporte<ReciboDto> reporteService) =>
+app.MapGet("/download-report/{nombreReporte}", async (
+    string nombreReporte,
+    HttpContext context, 
+    [FromServices] IServiceProvider serviceProvider) =>
 {
-    var request = new ReportRequest<ReciboDto>
+    if (!reportesConfig.TryGetValue(nombreReporte, out var dtoType))
+        return Results.NotFound("Reporte no encontrado");
+
+    try
     {
-        Entity = new ReciboDto
-        {
-            Numero = numero,
-            Fecha = fecha,
-            Recibido = recibido,
-            Domicilio = domicilio,
-            CP = cp,
-            Localidad = localidad,
-            Cantidad = cantidad,
-            CUIT = cuit,
-            Telefono = telefono,
-            EMP = emp,
-            TipoDePago = tipodepago,
-            Periodo = periodo,
-            Ubicacion = ubicacion
-        },
-        NombreReporte = "Recibo"
-    };
+        var parameters = context.Request.Query
+            .ToDictionary(k => k.Key, v => v.Value.ToString());
 
-    byte[] pdfBytes = await reporteService.Ejecutar(request);
+        var reporteServiceType = typeof(IReporte<>).MakeGenericType(dtoType);
+        var reporteService = serviceProvider.GetRequiredService(reporteServiceType);
 
-    if (pdfBytes == null || pdfBytes.Length == 0)
-        return Results.NotFound();
+        var method = typeof(ReportHandler).GetMethod(nameof(ReportHandler.GenerateReport));
+        var genericMethod = method.MakeGenericMethod(dtoType);
 
-    return Results.File(pdfBytes, "application/pdf", "Recibo.pdf");
+        var task = (Task<byte[]?>)genericMethod.Invoke(null,
+            new object[] { parameters, nombreReporte, reporteService });
+
+        var pdfBytes = await task;
+
+        return pdfBytes == null || pdfBytes.Length == 0
+            ? Results.NotFound("Documento no generado")
+            : Results.File(pdfBytes, "application/pdf", $"{nombreReporte}.pdf");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Error generando reporte: {ex.Message}");
+    }
 });
 
 

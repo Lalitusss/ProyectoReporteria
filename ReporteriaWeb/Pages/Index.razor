@@ -21,12 +21,12 @@
                 {
                     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionColumn1">
                         <div class="accordion-body border p-3">
-                            <input type="text" class="form-control mb-2" placeholder="Afiliado" @bind="afiliado" />
-                            <input type="text" class="form-control mb-2" placeholder="CUIL" @bind="cuil" />
-                            <input type="text" class="form-control mb-2" placeholder="DU" @bind="du" />
-                            <input type="text" class="form-control mb-2" placeholder="Titular" @bind="titular" />
+                            <input type="text" class="form-control mb-2" placeholder="Afiliado" @bind="credencialOSDto.Afiliado" />
+                            <input type="text" class="form-control mb-2" placeholder="CUIL" @bind="credencialOSDto.Cuil" />
+                            <input type="text" class="form-control mb-2" placeholder="DU" @bind="credencialOSDto.DU" />
+                            <input type="text" class="form-control mb-2" placeholder="Titular" @bind="credencialOSDto.Titular" />
                             <div class="d-flex justify-content-center">
-                                <button @onclick="DownloadPdf" class="btn btn-primary mb-4">
+                                <button @onclick="DownloadCredencial" class="btn btn-primary mb-4">
                                     <i class="fas fa-file-pdf"></i> Descargar
                                 </button>
                             </div>
@@ -107,21 +107,21 @@
                 {
                     <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour" data-bs-parent="#accordionColumn4">
                         <div class="accordion-body border p-3">
-                            <input type="text" class="form-control mb-2" placeholder="Número" @bind="numero" />
-                            <input type="text" class="form-control mb-2" placeholder="Fecha" @bind="fecha" />
-                            <input type="text" class="form-control mb-2" placeholder="Recibido" @bind="recibido" />
-                            <input type="text" class="form-control mb-2" placeholder="Domicilio" @bind="domicilio" />
-                            <input type="text" class="form-control mb-2" placeholder="CP" @bind="cp" />
-                            <input type="text" class="form-control mb-2" placeholder="Localidad" @bind="localidad" />
-                            <input type="text" class="form-control mb-2" placeholder="Cantidad" @bind="cantidad" />
-                            <input type="text" class="form-control mb-2" placeholder="CUIT" @bind="cuit" />
-                            <input type="text" class="form-control mb-2" placeholder="Teléfono" @bind="telefono" />
-                            <input type="text" class="form-control mb-2" placeholder="EMP" @bind="emp" />
-                            <input type="text" class="form-control mb-2" placeholder="Tipo de Pago" @bind="tipodepago" />
-                            <input type="text" class="form-control mb-2" placeholder="Período" @bind="periodo" />
-                            <input type="text" class="form-control mb-2" placeholder="Ubicación" @bind="ubicacion" />
+                            <input type="text" class="form-control mb-2" placeholder="Número" @bind="reciboDto.Numero" />
+                            <input type="text" class="form-control mb-2" placeholder="Fecha" @bind="reciboDto.Fecha" />
+                            <input type="text" class="form-control mb-2" placeholder="Recibido" @bind="reciboDto.Recibido" />
+                            <input type="text" class="form-control mb-2" placeholder="Domicilio" @bind="reciboDto.Domicilio" />
+                            <input type="text" class="form-control mb-2" placeholder="CP" @bind="reciboDto.CP" />
+                            <input type="text" class="form-control mb-2" placeholder="Localidad" @bind="reciboDto.Localidad" />
+                            <input type="text" class="form-control mb-2" placeholder="Cantidad" @bind="reciboDto.Cantidad" />
+                            <input type="text" class="form-control mb-2" placeholder="CUIT" @bind="reciboDto.CUIT" />
+                            <input type="text" class="form-control mb-2" placeholder="Teléfono" @bind="reciboDto.Telefono" />
+                            <input type="text" class="form-control mb-2" placeholder="EMP" @bind="reciboDto.EMP" />
+                            <input type="text" class="form-control mb-2" placeholder="Tipo de Pago" @bind="reciboDto.TipoDePago" />
+                            <input type="text" class="form-control mb-2" placeholder="Período" @bind="reciboDto.Periodo" />
+                            <input type="text" class="form-control mb-2" placeholder="Ubicación" @bind="reciboDto.Ubicacion" />
                             <div class="d-flex justify-content-center">
-                                <button @onclick="DownloadPdfRecibo" class="btn btn-primary">
+                                <button @onclick="DownloadRecibo" class="btn btn-primary">
                                     <i class="fas fa-download"></i> Descargar
                                 </button>
                             </div>
@@ -136,25 +136,6 @@
 @code {
     // Solo una sección activa a la vez
     private int? activeSection = null;
-    // CredencialOS
-    private string afiliado;
-    private string cuil;
-    private string du;
-    private string titular;
-    // Recibo
-    private string numero;
-    private string fecha;
-    private string recibido;
-    private string domicilio;
-    private string cp;
-    private string localidad;
-    private string cantidad;
-    private string cuit;
-    private string telefono;
-    private string emp;
-    private string tipodepago;
-    private string periodo;
-    private string ubicacion;
 
     private void ToggleSection(int sectionNumber)
     {
@@ -169,29 +150,27 @@
     }
 
     private bool IsSectionActive(int sectionNumber) => activeSection == sectionNumber;
-    private async Task DownloadPdf()
-    {
-        string url = $"/download-credencial?afiliado={Uri.EscapeDataString(afiliado)}&cuil={Uri.EscapeDataString(cuil)}&du={Uri.EscapeDataString(du)}&titular={Uri.EscapeDataString(titular)}";
-        await JS.InvokeVoidAsync("downloadFileFromUrl", url);
-    }
-    private async Task DownloadPdfRecibo()
-    {
-        string url = $"/download-recibo?" +
-                     $"numero={Uri.EscapeDataString(numero ?? string.Empty)}&" +
-                     $"fecha={Uri.EscapeDataString(fecha ?? string.Empty)}&" +
-                     $"recibido={Uri.EscapeDataString(recibido ?? string.Empty)}&" +
-                     $"domicilio={Uri.EscapeDataString(domicilio ?? string.Empty)}&" +
-                     $"cp={Uri.EscapeDataString(cp ?? string.Empty)}&" +
-                     $"localidad={Uri.EscapeDataString(localidad ?? string.Empty)}&" +
-                     $"cantidad={Uri.EscapeDataString(cantidad ?? string.Empty)}&" +
-                     $"cuit={Uri.EscapeDataString(cuit ?? string.Empty)}&" +
-                     $"telefono={Uri.EscapeDataString(telefono ?? string.Empty)}&" +
-                     $"emp={Uri.EscapeDataString(emp ?? string.Empty)}&" +
-                     $"tipodepago={Uri.EscapeDataString(tipodepago ?? string.Empty)}&" +
-                     $"periodo={Uri.EscapeDataString(periodo ?? string.Empty)}&" +
-                     $"ubicacion={Uri.EscapeDataString(ubicacion ?? string.Empty)}";
+    // DTOs para los formularios
+    private CredencialOSDto credencialOSDto = new();
+    private ReciboDto reciboDto = new();
+    private Task DownloadCredencial() => DownloadReporteGenerico("CredencialOS", credencialOSDto);
 
-        await JS.InvokeVoidAsync("downloadFileFromUrl", url);
+    private Task DownloadRecibo() => DownloadReporteGenerico("Recibo", reciboDto);
+
+    private async Task DownloadReporteGenerico<TDto>(
+        string nombreReporte,
+        TDto parametros,
+        string? nombreArchivo = null)
+        where TDto : class
+    {
+        var queryParams = string.Join("&", parametros.ToDictionary()
+            .Where(p => !string.IsNullOrEmpty(p.Value))
+            .Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value)}"));
+
+        string url = $"/download-report/{nombreReporte}?{queryParams}";
+
+        await JS.InvokeVoidAsync("downloadFileFromUrl", url, nombreArchivo ?? $"{nombreReporte}.pdf");
     }
+
 }
  
